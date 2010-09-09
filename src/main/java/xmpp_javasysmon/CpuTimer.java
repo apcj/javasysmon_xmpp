@@ -15,9 +15,7 @@ class CpuTimer implements Runnable {
     public void run() {
         CpuTimes newCpuTimes = new JavaSysMon().cpuTimes();
         if (cpuTimes != null) {
-            String currentCpuUsage = newCpuTimes.getCpuUsage(cpuTimes) * 100 + "%";
-            xmppClient.sendMessage(currentCpuUsage);
-            System.out.println(currentCpuUsage);
+            xmppClient.sendMessage(String.valueOf(newCpuTimes.getCpuUsage(cpuTimes) * 100));
 
         }
         cpuTimes = newCpuTimes;
