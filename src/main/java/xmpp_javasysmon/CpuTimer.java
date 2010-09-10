@@ -3,6 +3,9 @@ package xmpp_javasysmon;
 import com.jezhumble.javasysmon.CpuTimes;
 import com.jezhumble.javasysmon.JavaSysMon;
 
+import static xmpp_javasysmon.MeasurementField.field;
+import static xmpp_javasysmon.MeasurementRecord.record;
+
 class CpuTimer implements Runnable {
 
     private CpuTimes cpuTimes;
@@ -15,7 +18,7 @@ class CpuTimer implements Runnable {
     public void run() {
         CpuTimes newCpuTimes = new JavaSysMon().cpuTimes();
         if (cpuTimes != null) {
-            xmppClient.sendMessage(String.valueOf(newCpuTimes.getCpuUsage(cpuTimes) * 100));
+            xmppClient.sendMessage(record(field("cpuUsage", newCpuTimes.getCpuUsage(cpuTimes) * 100)).toJson());
 
         }
         cpuTimes = newCpuTimes;
