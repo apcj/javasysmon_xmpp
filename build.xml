@@ -1,0 +1,58 @@
+<project name="javasysmon_xmpp" default="dev.build" basedir=".">
+
+    <!-- Properties -->
+
+    <property name="build.dir" value="target"/>
+    <property name="src.dir" value="src/main/java"/>
+    <property name="src.build.dir" value="${build.dir}/classes"/>
+    <property name="lib.dir" value="lib"/>
+
+    <!-- Classpaths-->
+
+    <path id="compile.classpath">
+        <pathelement location="${lib.dir}/javasysmon-0.3.2.jar"/>
+        <pathelement location="${lib.dir}/smack.jar"/>
+        <pathelement location="${lib.dir}/smackx.jar"/>
+    </path>
+
+    <!-- Targets -->
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="-init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${src.build.dir}"/>
+    </target>
+
+    <target name="-compile">
+        <javac srcdir="${src.dir}"
+               destdir="${src.build.dir}"
+               classpathref="compile.classpath"/>
+    </target>
+
+    <target name="-package">
+        <jar basedir="${src.build.dir}" destfile="${build.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="xmpp_javasysmon.Main"/>
+                <attribute name="Class-Path" value="${lib.dir}/javasysmon-0.3.2.jar ${lib.dir}/smack.jar ${lib.dir}/smackx.jar"/>
+            </manifest>
+        </jar>
+
+    </target>
+
+    <target name="-deployable.artefact">
+        <tar destfile="${build.dir}/${ant.project.name}.tar" >
+            <tarfileset dir="${build.dir}" prefix="${ant.project.name}">
+                <exclude name="classes/**"/>
+            </tarfileset>
+            <tarfileset dir="${lib.dir}" prefix="${ant.project.name}/lib" />
+        </tar>
+    </target>
+
+    <target name="dev.build" description="Basic compile and unit test target" depends="clean, -init, -compile, -package"/>
+
+    <target name="deployable.build" description="creates an archive containing a jar, plus dependencies" depends="dev.build, -deployable.artefact"/>
+
+</project>
